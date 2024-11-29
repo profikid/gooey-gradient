@@ -29,16 +29,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Configure Next.js for static export
-        run: |
-          echo '{
-            "output": "export",
-            "images": {
-              "unoptimized": true
-            },
-            "basePath": "/gooey-gradient"
-          }' > next.config.js
-
       - name: Build project
         run: npm run build
 
