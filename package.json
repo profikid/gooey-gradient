@@ -1,1 +1,33 @@
-ewoJICJuYW1lIjogImdvb2V5LWdyYWRpZW50IiwKCSJ2ZXJzaW9uIjogIjAuMS4wIiwKCSJwcml2YXRlIjogdHJ1ZSwKCSJzY3JpcHRzIjogewoJCSJkZXYiOiAibmV4dCBkZXYiLAoJCSJidWlsZCI6ICJuZXh0IGJ1aWxkIiwKCQkic3RhcnQiOiAibmV4dCBzdGFydCIsCgkJImxpbnQiOiAibmV4dCBsaW50IgoJfSwKCSJkZXBlbmRlbmNpZXMiOiB7CgkJIkByYWRpeC11aS9yZWFjdC1zbGlkZXIiOiAiXjEuMS4yIiwKCQkiY2xhc3MtdmFyaWFuY2UtYXV0aG9yaXR5IjogIl4wLjcuMCIsCgkJImNsc3giOiAiXjIuMC4wIiwKCQkibHVjaWRlLXJlYWN0IjogIl4wLjI5NC4wIiwKCQkibmV4dCI6ICIxNC4wLjMiLAoJCSJyZWFjdCI6ICJeMTguMi4wIiwKCQkicmVhY3QtZG9tIjogIl4xOC4yLjAiLAoJCSJ0YWlsd2luZC1tZXJnZSI6ICJeMi4xLjAiLAoJCSJ0YWlsd2luZGNzcy1hbmltYXRlIjogIl4xLjAuNyIKCX0sCgkiZGV2RGVwZW5kZW5jaWVzIjogewoJCSJAdHlwZXMvbm9kZSI6ICJeMjAuMTAuMCIsCgkJIkB0eXBlcy9yZWFjdCI6ICJeMTguMi4zOSIsCgkJIkB0eXBlcy9yZWFjdC1kb20iOiAiXjE4LjIuMTciLAoJCSJhdXRvcHJlZml4ZXIiOiAiXjEwLjQuMTYiLAoJCSJlc2xpbnQiOiAiXjguNTQuMCIsCgkJImVzbGludC1jb25maWctbmV4dCI6ICIxNC4wLjMiLAoJCSJwb3N0Y3NzIjogIl44LjQuMzEiLAoJCSJ0YWlsd2luZGNzcyI6ICJeMy4zLjUiLAoJCSJ0eXBlc2NyaXB0IjogIl41LjMuMiIKCX0KfQ==
+{
+  "name": "gooey-gradient",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@radix-ui/react-slider": "^1.1.2",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "lucide-react": "^0.294.0",
+    "next": "14.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^2.1.0",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.39",
+    "@types/react-dom": "^18.2.17",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.54.0",
+    "eslint-config-next": "14.0.3",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5",
+    "typescript": "^5.3.2"
+  }
+}
