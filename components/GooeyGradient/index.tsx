@@ -64,3 +64,180 @@ const GooeyGradient = () => {
       particles = [];
     };
   }, []);
+
+  // Animation loop separate from initialization
+  useEffect(() => {
+    if (!ctxRef.current) return;
+
+    const playCollisionSound = (velocity, blobSize) => {
+      if (audioContextRef.current) {
+        const oscillator = audioContextRef.current.createOscillator();
+        const gainNode = audioContextRef.current.createGain();
+        
+        const frequency = baseFrequency + (velocity * 100) + (blobSize);
+        const volume = Math.min(velocity * 0.1, soundVolume);
+        
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
+        
+        gainNode.gain.setValueAtTime(0, audioContextRef.current.currentTime);
+        gainNode.gain.linearRampToValueAtTime(volume, audioContextRef.current.currentTime + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContextRef.current.currentTime + 0.1);
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContextRef.current.destination);
+        
+        oscillator.start();
+        oscillator.stop(audioContextRef.current.currentTime + 0.1);
+      }
+    };
+
+    const animate = () => {
+      const ctx = ctxRef.current;
+      const canvas = containerRef.current;
+
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Update simulation parameters
+      particles.forEach(particle => {
+        particle.energy = particleEnergy;
+        particle.maxSpeed = particleSpeed;
+        particle.gravitationalForce = gravitationalForce;
+      });
+
+      blobs.forEach(blob => {
+        blob.update();
+        blob.draw(ctx);
+      });
+
+      particles.forEach(particle => {
+        particle.update(blobs, playCollisionSound);
+        particle.draw(ctx);
+      });
+
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [baseFrequency, soundVolume, gravitationalForce, particleEnergy, particleSpeed]);
+
+  return (
+    <div className="relative">
+      <div className="fixed inset-0 overflow-hidden bg-black">
+        <canvas
+          ref={containerRef}
+          className="w-full h-full touch-none"
+          style={{
+            filter: 'url(#goo)',
+            mixBlendMode: 'screen',
+          }}
+        />
+      </div>
+
+      <Card className="fixed bottom-4 left-4 w-96 bg-black/50 backdrop-blur-sm border-gray-700">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-white text-sm">Simulation Controls</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <label className="text-xs text-white">Sound Frequency</label>
+              <span className="text-xs text-white">{baseFrequency}Hz</span>
+            </div>
+            <Slider 
+              value={[baseFrequency]} 
+              onValueChange={([value]) => setBaseFrequency(value)}
+              min={100}
+              max={500}
+              step={10}
+              className="my-2"
+            />
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <label className="text-xs text-white">Sound Volume</label>
+              <span className="text-xs text-white">{(soundVolume * 100).toFixed(0)}%</span>
+            </div>
+            <Slider 
+              value={[soundVolume]} 
+              onValueChange={([value]) => setSoundVolume(value)}
+              min={0}
+              max={0.3}
+              step={0.01}
+              className="my-2"
+            />
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <label className="text-xs text-white">Gravitational Force</label>
+              <span className="text-xs text-white">{gravitationalForce}</span>
+            </div>
+            <Slider 
+              value={[gravitationalForce]} 
+              onValueChange={([value]) => setGravitationalForce(value)}
+              min={5}
+              max={50}
+              step={1}
+              className="my-2"
+            />
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <label className="text-xs text-white">Particle Energy</label>
+              <span className="text-xs text-white">{particleEnergy.toFixed(1)}</span>
+            </div>
+            <Slider 
+              value={[particleEnergy]} 
+              onValueChange={([value]) => setParticleEnergy(value)}
+              min={0.1}
+              max={1}
+              step={0.1}
+              className="my-2"
+            />
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <label className="text-xs text-white">Max Particle Speed</label>
+              <span className="text-xs text-white">{particleSpeed.toFixed(1)}</span>
+            </div>
+            <Slider 
+              value={[particleSpeed]} 
+              onValueChange={([value]) => setParticleSpeed(value)}
+              min={2}
+              max={10}
+              step={0.5}
+              className="my-2"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <svg className="absolute w-0 h-0">
+        <defs>
+          <filter id="goo">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
+            <feColorMatrix
+              in="blur"
+              mode="matrix"
+              values="1 0 0 0 0
+                     0 1 0 0 0
+                     0 0 1 0 0
+                     0 0 0 30 -8"
+              result="goo"
+            />
+            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+          </filter>
+        </defs>
+      </svg>
+    </div>
+  );
+};
+
+export default GooeyGradient;
