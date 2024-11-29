@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Slider } from '@/components/ui/slider';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Slider } from '../../components/ui/slider';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Blob } from './Blob';
 import { Particle } from './Particle';
 
@@ -28,7 +28,7 @@ const GooeyGradient = () => {
   useEffect(() => {
     if (isInitialized) return;
     
-    audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+    audioContextRef.current = new (window.AudioContext || window.AudioContext)();
     const canvas = containerRef.current;
     ctxRef.current = canvas.getContext('2d');
     

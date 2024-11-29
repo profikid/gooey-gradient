@@ -1,4 +1,4 @@
-import GooeyGradient from '@/components/GooeyGradient';
+import GooeyGradient from '../components/GooeyGradient';
 
 export default function Home() {
   return (

@@ -1,4 +1,4 @@
-import { Blob } from './Blob';
+import { Blob } from '../../components/GooeyGradient/Blob';
 
 export class Particle {
   private canvas: HTMLCanvasElement;
