@@ -5,6 +5,7 @@ import { Slider } from '../../components/ui/slider';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Blob } from './Blob';
 import { Particle } from './Particle';
+import { AudioService } from '../../lib/audio';
 
 // Global simulation parameters that don't need to be in state
 let blobs = [];
@@ -14,7 +15,7 @@ let isInitialized = false;
 const GooeyGradient = () => {
   const containerRef = useRef(null);
   const animationRef = useRef(null);
-  const audioContextRef = useRef(null);
+  const audioServiceRef = useRef<AudioService | null>(null);
   const ctxRef = useRef(null);
 
   // Control states
@@ -28,7 +29,7 @@ const GooeyGradient = () => {
   useEffect(() => {
     if (isInitialized) return;
     
-    audioContextRef.current = new (window.AudioContext || window.AudioContext)();
+    audioServiceRef.current = new AudioService();
     const canvas = containerRef.current;
     ctxRef.current = canvas.getContext('2d');
     
@@ -56,8 +57,8 @@ const GooeyGradient = () => {
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
+      if (audioServiceRef.current) {
+        audioServiceRef.current.cleanup();
       }
       isInitialized = false;
       blobs = [];
@@ -65,31 +66,20 @@ const GooeyGradient = () => {
     };
   }, []);
 
+  // Update audio parameters when they change
+  useEffect(() => {
+    if (audioServiceRef.current) {
+      audioServiceRef.current.setBaseFrequency(baseFrequency);
+      audioServiceRef.current.setSoundVolume(soundVolume);
+    }
+  }, [baseFrequency, soundVolume]);
+
   // Animation loop separate from initialization
   useEffect(() => {
     if (!ctxRef.current) return;
 
-    const playCollisionSound = (velocity, blobSize) => {
-      if (audioContextRef.current) {
-        const oscillator = audioContextRef.current.createOscillator();
-        const gainNode = audioContextRef.current.createGain();
-        
-        const frequency = baseFrequency + (velocity * 100) + (blobSize);
-        const volume = Math.min(velocity * 0.1, soundVolume);
-        
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
-        
-        gainNode.gain.setValueAtTime(0, audioContextRef.current.currentTime);
-        gainNode.gain.linearRampToValueAtTime(volume, audioContextRef.current.currentTime + 0.01);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContextRef.current.currentTime + 0.1);
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContextRef.current.destination);
-        
-        oscillator.start();
-        oscillator.stop(audioContextRef.current.currentTime + 0.1);
-      }
+    const playCollisionSound = (velocity: number, blobSize: number) => {
+      audioServiceRef.current?.playCollisionSound(velocity, blobSize);
     };
 
     const animate = () => {
